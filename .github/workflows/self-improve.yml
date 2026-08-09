@@ -43,6 +43,10 @@ jobs:
   improve:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'agent-request'
+    env:
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      AGENT_MODEL: ${{ vars.AGENT_MODEL || 'deepseek-chat' }}
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
 
@@ -54,11 +58,7 @@ jobs:
         run: pip install -r harness/requirements.txt
 
       - name: Run the agent
-        if: ${{ secrets.DEEPSEEK_API_KEY != '' }}
-        env:
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          AGENT_MODEL: ${{ vars.AGENT_MODEL || 'deepseek-chat' }}
-          GITHUB_TOKEN: ${{ github.token }}
+        if: env.DEEPSEEK_API_KEY != ''
         run: |
           if [ "${{ github.event_name }}" == "issues" ]; then
             python harness/runner.py --issue "${{ github.event.issue.number }}" \
@@ -75,7 +75,7 @@ jobs:
           fi
 
       - name: Stand-down notice (API key not configured)
-        if: ${{ secrets.DEEPSEEK_API_KEY == '' }}
+        if: env.DEEPSEEK_API_KEY == ''
         run: |
           echo "::warning title=Agent stood down::DEEPSEEK_API_KEY is not configured."
           echo "Add the secret at Settings → Secrets and variables → Actions →"
