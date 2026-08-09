@@ -1,4 +1,12 @@
 # Agent Journal
+## 2026-08-09 15:44 UTC — issue #1
+
+**Task:** Issue #1: Add a clear_todos() method Please add a method that empties the todo list, with tests.
+
+**Result:** ✅ passed · 2 file(s): src/tinymind.py, tests/test_tinymind.py
+
+Add clear_todos() method to TinyMind that empties the todo list, with tests.
+
 ## 2026-08-09 15:41 UTC — manual dispatch
 
 **Task:** Add a fact_count() method to TinyMind that returns how many facts are stored, with tests.

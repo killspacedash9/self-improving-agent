@@ -62,6 +62,10 @@ class TinyMind:
         """Return the current todo list."""
         return list(self.todos)
 
+    def clear_todos(self) -> None:
+        """Remove all items from the todo list."""
+        self.todos.clear()
+
     def proverb(self) -> str:
         """Return a random proverb from TinyMind's collection."""
         return random.choice(self.PROVERBS)

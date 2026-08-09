@@ -42,6 +42,18 @@ class TestTinyMind(unittest.TestCase):
         mind.add_todo("improve yourself")
         self.assertEqual(mind.todos_list(), ["improve yourself"])
 
+    def test_clear_todos_empties_list(self):
+        mind = TinyMind()
+        mind.add_todo("improve yourself")
+        mind.add_todo("write tests")
+        mind.clear_todos()
+        self.assertEqual(mind.todos_list(), [])
+
+    def test_clear_todos_on_empty_list(self):
+        mind = TinyMind()
+        mind.clear_todos()
+        self.assertEqual(mind.todos_list(), [])
+
     def test_proverb_returns_known_proverb(self):
         self.assertIn(TinyMind().proverb(), TinyMind.PROVERBS)
 
