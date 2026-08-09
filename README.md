@@ -46,9 +46,12 @@ All you need to run it: a **DeepSeek API key** (for the agent's brain) and a
    up to 3 rounds per run.
 7. When green: the agent **journals** the run (`AGENT_JOURNAL.md`), **commits**
    as the bot, and **pushes** to the branch (or opens a PR in `pr` mode).
-8. The push triggers the *Deploy Pages* workflow — the repo **re-publishes
-   itself**, and the chat window's journal feed updates. If the task came from
-   an issue, the agent **comments** the result on it.
+8. The repo **re-publishes itself**: a deploy job in the same workflow checks
+   out the exact commit the agent pushed and deploys it to Pages (pushes made
+   with the Actions token don't fire other workflows' `push` events, so the
+   deploy rides along in the same run; human pushes still trigger
+   `pages.yml`). The chat window's journal feed updates, and if the task came
+   from an issue, the agent **comments** the result on it.
 
 ## Repo map
 

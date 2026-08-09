@@ -10,8 +10,8 @@ How Aster works, end to end. Read this before extending anything.
 | Rules | `AGENTS.md` | Operational contract: the improvement loop, the JSON response schema, the path whitelist, failure honesty. |
 | Harness | `harness/runner.py` | The only process that touches git or the API. Stdlib-only. Owns the journal. |
 | Brain | DeepSeek API | Stateless planner/editor. Receives context, returns full file contents in JSON. |
-| Trigger | `.github/workflows/self-improve.yml` | `workflow_dispatch` (manual) or `issues: labeled` (chat). |
-| Publisher | `.github/workflows/pages.yml` | Re-deploys `web/` on every push to main. |
+| Trigger | `.github/workflows/self-improve.yml` | `workflow_dispatch` (manual) or `issues: labeled` (chat). Its `deploy` job also publishes the agent's commit — Actions-token pushes don't fire other workflows' `push` events. |
+| Publisher | `.github/workflows/pages.yml` | Re-deploys `web/` on human pushes to main. |
 | Interface | `web/` | Zero-dependency chat window: files issues, shows journal + request feed. |
 
 ## The harness pipeline (`runner.py`)
@@ -74,8 +74,14 @@ All other git operations use the credential persisted by `actions/checkout`.
 - The issue trigger is `types: [labeled]` with a job-level filter on
   `github.event.label.name == 'agent-request'`; the chat window creates that
   label automatically.
-- Pushes from the agent do not retrigger `self-improve.yml` (no `push`
-  trigger), but do trigger `pages.yml` — the publish step.
+- **Pushes made with `GITHUB_TOKEN` never fire `push` events on other
+  workflows** — so the agent's own push cannot trigger `pages.yml`. The
+  Self-Improve workflow therefore deploys in a second job (`deploy`), checking
+  out the commit the agent pushed (`improve.outputs.pushed_sha`). Human pushes
+  still go through `pages.yml`. Both share `concurrency: pages` so deploys
+  never race. Note: `deploy-pages` labels the deployment with the event SHA
+  (`github.sha`), not the artifact SHA — the artifact itself is built from the
+  agent's commit.
 
 ## Threat model (read before exposing publicly)
 
