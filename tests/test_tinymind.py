@@ -27,6 +27,17 @@ class TestTinyMind(unittest.TestCase):
         mind.add_todo("improve yourself")
         self.assertEqual(mind.todos_list(), ["improve yourself"])
 
+    def test_proverb_returns_known_proverb(self):
+        self.assertIn(TinyMind().proverb(), TinyMind.PROVERBS)
+
+    def test_proverb_is_nonempty_string(self):
+        proverb = TinyMind().proverb()
+        self.assertIsInstance(proverb, str)
+        self.assertTrue(proverb.strip())
+
+    def test_proverbs_list_is_populated(self):
+        self.assertGreater(len(TinyMind.PROVERBS), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

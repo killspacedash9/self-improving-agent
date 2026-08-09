@@ -8,9 +8,24 @@ through the chat window.
 
 from __future__ import annotations
 
+import random
+
 
 class TinyMind:
     """A tiny mind with a greeting, a memory for facts, and a todo list."""
+
+    PROVERBS: list[str] = [
+        "A journey of a thousand miles begins with a single step.",
+        "Actions speak louder than words.",
+        "A rolling stone gathers no moss.",
+        "Don't count your chickens before they hatch.",
+        "The early bird catches the worm.",
+        "Every cloud has a silver lining.",
+        "Rome wasn't built in a day.",
+        "When in Rome, do as the Romans do.",
+        "Haste makes waste.",
+        "A picture is worth a thousand words.",
+    ]
 
     def __init__(self) -> None:
         self.facts: dict[str, str] = {}
@@ -42,6 +57,10 @@ class TinyMind:
     def todos_list(self) -> list[str]:
         """Return the current todo list."""
         return list(self.todos)
+
+    def proverb(self) -> str:
+        """Return a random proverb from TinyMind's collection."""
+        return random.choice(self.PROVERBS)
 
 
 def version() -> str:
