@@ -1,0 +1,42 @@
+name: Deploy Pages
+
+# Publishes the chat window (web/) to GitHub Pages. Runs on every push to
+# main — including pushes made by the agent itself — so the repo literally
+# re-publishes itself after every self-improvement.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - name: Stage the site
+        run: |
+          mkdir -p _site
+          cp -r web/. _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

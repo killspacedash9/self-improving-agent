@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aster — self-improving repository</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="dot"></span>
+    <strong>Aster</strong>
+    <span class="sub">self-improving repository</span>
+  </div>
+  <div class="head-right">
+    <span id="status" class="pill dim">offline</span>
+    <button id="settingsBtn" class="ghost" title="Repository settings">⚙ Settings</button>
+  </div>
+</header>
+
+<main>
+  <section class="chat">
+    <div id="messages" class="messages" aria-live="polite"></div>
+    <form id="composer" class="composer" autocomplete="off">
+      <textarea id="input" rows="2" maxlength="2000"
+        placeholder="Request a feature or a fix… e.g. “Add a method that returns a random proverb.”"></textarea>
+      <button type="submit" id="send">Send</button>
+    </form>
+  </section>
+
+  <aside class="side">
+    <div class="card">
+      <h3>How the loop works</h3>
+      <ol class="steps">
+        <li>You type a request here.</li>
+        <li>It becomes a GitHub issue labeled <code>agent-request</code>.</li>
+        <li>The <em>Self-Improve</em> workflow wakes up and asks DeepSeek for a plan.</li>
+        <li>The agent edits its own code, runs the tests, and commits.</li>
+        <li>Pages re-deploys itself — and the journal below updates.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Recent requests</h3>
+      <div id="recent"><p class="dim">Not connected yet.</p></div>
+    </div>
+    <div class="card">
+      <h3>Recent self-improvements</h3>
+      <div id="journal"><p class="dim">Not connected yet.</p></div>
+    </div>
+  </aside>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Settings</h2>
+    <p class="dim">Where should requests go? The GitHub <strong>PAT</strong> is stored only in this browser (localStorage) and is used to create issues on your behalf. Scope needed: classic <code>repo</code>, or fine-grained <code>issues: write</code>.</p>
+    <label>GitHub owner / user</label>
+    <input id="cfgOwner" type="text" placeholder="killspacedash9">
+    <label>Repository</label>
+    <input id="cfgRepo" type="text" placeholder="self-improving-agent">
+    <label>Personal access token</label>
+    <input id="cfgToken" type="password" placeholder="ghp_… or github_pat_…">
+    <div class="modal-actions">
+      <button id="cfgSave" class="primary">Save</button>
+      <button id="cfgClear" class="ghost">Clear token</button>
+      <button id="cfgClose" class="ghost">Close</button>
+    </div>
+    <p id="cfgError" class="error dim hidden"></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
