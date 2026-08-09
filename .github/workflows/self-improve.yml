@@ -5,6 +5,11 @@ name: Self-Improve
 #   - via chat:  the chat window files an issue labeled "agent-request";
 #                the `labeled` event fires and the agent picks it up,
 #                then comments its result back on the issue.
+#
+# Deploy note: pushes made with GITHUB_TOKEN do NOT trigger `push` events on
+# other workflows, so the agent's own push would never re-deploy Pages.
+# Instead, the `deploy` job below publishes the exact commit the agent
+# pushed. (pages.yml still handles human pushes.)
 
 on:
   workflow_dispatch:
@@ -34,6 +39,8 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: self-improve
@@ -47,6 +54,8 @@ jobs:
       DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
       AGENT_MODEL: ${{ vars.AGENT_MODEL || 'deepseek-chat' }}
       GITHUB_TOKEN: ${{ github.token }}
+    outputs:
+      pushed_sha: ${{ steps.agent.outputs.pushed_sha }}
     steps:
       - uses: actions/checkout@v4
 
@@ -58,6 +67,7 @@ jobs:
         run: pip install -r harness/requirements.txt
 
       - name: Run the agent
+        id: agent
         if: env.DEEPSEEK_API_KEY != ''
         run: |
           if [ "${{ github.event_name }}" == "issues" ]; then
@@ -73,6 +83,7 @@ jobs:
               --branch "${{ github.ref_name }}" \
               --max-rounds "${{ inputs.max_rounds || 3 }}"
           fi
+          echo "pushed_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Stand-down notice (API key not configured)
         if: env.DEEPSEEK_API_KEY == ''
@@ -80,3 +91,33 @@ jobs:
           echo "::warning title=Agent stood down::DEEPSEEK_API_KEY is not configured."
           echo "Add the secret at Settings → Secrets and variables → Actions →"
           echo "DEEPSEEK_API_KEY, then re-run this workflow."
+
+  deploy:
+    # Publish the agent's freshly pushed commit to GitHub Pages.
+    needs: improve
+    if: needs.improve.result == 'success' && needs.improve.outputs.pushed_sha != ''
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.improve.outputs.pushed_sha }}
+
+      - uses: actions/configure-pages@v5
+
+      - name: Stage the site
+        run: |
+          mkdir -p _site
+          cp -r web/. _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
