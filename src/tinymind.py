@@ -50,6 +50,10 @@ class TinyMind:
         """Recall a fact, or admit ignorance."""
         return self.facts.get(topic.strip().lower(), f"I know nothing about {topic}.")
 
+    def fact_count(self) -> int:
+        """Return how many facts are currently stored."""
+        return len(self.facts)
+
     def add_todo(self, item: str) -> None:
         """Add an item to the todo list."""
         self.todos.append(item)

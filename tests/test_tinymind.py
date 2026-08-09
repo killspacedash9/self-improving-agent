@@ -22,6 +22,21 @@ class TestTinyMind(unittest.TestCase):
         self.assertEqual(mind.recall("Python"), "a friendly snake")
         self.assertIn("nothing", mind.recall("quantum"))
 
+    def test_fact_count_empty(self):
+        self.assertEqual(TinyMind().fact_count(), 0)
+
+    def test_fact_count_after_remember(self):
+        mind = TinyMind()
+        mind.remember("python", "a friendly snake")
+        mind.remember("aster", "a self-improving agent")
+        self.assertEqual(mind.fact_count(), 2)
+
+    def test_fact_count_case_insensitive_overwrite(self):
+        mind = TinyMind()
+        mind.remember("python", "a friendly snake")
+        mind.remember("Python", "a constricting snake")
+        self.assertEqual(mind.fact_count(), 1)
+
     def test_todos(self):
         mind = TinyMind()
         mind.add_todo("improve yourself")
