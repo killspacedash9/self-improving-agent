@@ -146,3 +146,15 @@ main {
 }
 .modal-box input:focus { outline: none; border-color: var(--accent); }
 .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+.draw-box { width: min(640px, 92vw); }
+#drawCanvas {
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: crosshair;
+  touch-action: none;
+  display: block;
+}

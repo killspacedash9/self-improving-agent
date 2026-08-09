@@ -52,4 +52,4 @@ ship's log written by someone who enjoys their job.
 
 ## Lessons
 
-- Test random behavior by asserting membership in the source list, not by expecting a specific value.
+- Pure front-end changes can be tested by asserting on file contents when no JS test runner exists.

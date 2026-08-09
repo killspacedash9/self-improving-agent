@@ -15,6 +15,7 @@
   </div>
   <div class="head-right">
     <span id="status" class="pill dim">offline</span>
+    <button id="drawBtn" class="ghost" title="Open drawing canvas">🎨 Draw</button>
     <button id="settingsBtn" class="ghost" title="Repository settings">⚙ Settings</button>
   </div>
 </header>
@@ -67,6 +68,18 @@
       <button id="cfgClose" class="ghost">Close</button>
     </div>
     <p id="cfgError" class="error dim hidden"></p>
+  </div>
+</div>
+
+<div id="drawModal" class="modal hidden">
+  <div class="modal-box draw-box">
+    <h2>Draw something</h2>
+    <p class="dim">Sketch with your mouse or finger.</p>
+    <canvas id="drawCanvas" width="600" height="400"></canvas>
+    <div class="modal-actions">
+      <button id="drawClear" class="ghost">Clear</button>
+      <button id="drawClose" class="primary">Done</button>
+    </div>
   </div>
 </div>
 
